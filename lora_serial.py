@@ -74,6 +74,9 @@ class LoRaSerial(object):
             sends a message to other LoRa devices
         '''
         self.write('radio tx ' + str.encode('hex'))
+        message = ''
+        while message == '':
+          message = self.read()
 
     def get_snr(self):
         return int(self.write('radio get snr'))
