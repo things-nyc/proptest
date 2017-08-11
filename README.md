@@ -1,4 +1,12 @@
-### Installation ###
+#### Abstract ####
+
+proptest is a python script for controlling a Microchip RN2903 "LoRaMOTE" for use in indoor propagation experiments.
+These experiments are for studying the ability of a 900MHz LoRa signal to reach different parts of a building.
+It uses simplex LoRa (not LoRaWAN/TTN) and does not channel hop, and therefore we operate under Part 97 rules and
+require an amateur radio license. One of the stated purposes of the amateur radio service is "advancing the radio art",
+which in this case means feeding back knowledge to The Things Network about indoor propagation.
+
+We use 6dBi sleeve dipole antennas (stock with the LoRaMOTES) and 20dBm (100mW) transmit power. See source for modulation details. Results from data taken with this setup can be extrapolated to other more limited situations (smaller antennas, less tx power, etc.). Higher power studies could also be interesting and possible with amateur radio license (permitting up to 10W on 33cm and unlimited antenna gain, up to human exposure considerations).
 
 #### Requirements ####
 
