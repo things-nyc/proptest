@@ -34,9 +34,11 @@ class LoRaSerial(object):
         # timeout for write
         self._ser.writeTimeout = 0
 
+        self.read()
+
         self.write_radio_config('mod lora')
         self.write_radio_config('pwr 20')
-        self.write_radio_config('sf sf12')
+        self.write_radio_config('sf sf7')
         self.write_radio_config('afcbw 125')
         self.write_radio_config('fdev 5000')
         self.write_radio_config('prlen 8')
@@ -52,13 +54,16 @@ class LoRaSerial(object):
         '''
             reads serial input
         '''
-        return self._ser.readline().strip()
+        r = self._ser.readline().strip()
+        #print "READ: ",r
+        return r
 
     def write(self, str):
         '''
             writes out string to serial connection, returns response
         '''
         self._ser.write(str + '\r\n')
+        #print "WROTE: ",str
         return self.read()
     
     def write_radio_config(self, config_str):
@@ -66,7 +71,7 @@ class LoRaSerial(object):
             writes out a radio config command
         '''
         response = self.write('radio set ' + config_str)
-        if response != 'ok':
+        if not response in ['k','ok']:
           raise LoraException("Error: Unexpected response: '%s'"%response)
         
     def send_message(self, str):
@@ -79,18 +84,24 @@ class LoRaSerial(object):
           message = self.read()
 
     def get_snr(self):
+      try:
         return int(self.write('radio get snr'))
+      except:
+        return 0
 
-    def receive_message(self, wait=False, encoding='binary'):
+    def receive_message(self, wait=False, encoding='binary', timeout=0):
         '''
             waits for a message
         '''
-        self.write('radio rx 0')
+        self.write('radio rx %d'%timeout)
 
         message = self.read()
         if wait:
             while message == '':
                 message = self.read()
+
+        if '_err' in message:
+          return ''
 
         message = message.replace('radio_rx  ', '')
         if not encoding == 'hex':
